@@ -24,7 +24,6 @@ dependencies {
     implementation libs.spring.boot.starter
     implementation libs.kafka
     compileOnly libs.lombok
-
 }
 
 test {
