@@ -1,2 +1,2 @@
-rootProject.name = "KafkaProject"
+rootProject.name = "TestProject"
 

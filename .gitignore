@@ -1,3 +1,7 @@
+.idea
+.out
+/shelf/
+/workspace.xml
 .gradle
 /build/
 !src//build/
