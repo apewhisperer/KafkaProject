@@ -1,0 +1,24 @@
+[versions]
+spring-boot-starter = "3.0.0"
+lombok = "1.18.22"
+kafka = "3.3.1"
+kafka-test = "3.0.0"
+spock = "2.0-groovy-3.0"
+groovy = "3.0.8"
+jupiter = '5.8.1'
+
+[libraries]
+spring-boot-starter = {module = "org.springframework.boot:spring-boot-starter", version.ref = "spring-boot-starter" }
+spring-boot-starter-test = {module = "org.springframework.boot:spring-boot-starter-test", version.ref = "spring-boot-starter" }
+
+lombok = {module = "org.projectlombok:lombok", version.ref = "lombok"}
+
+kafka = {module = "org.apache.kafka:kafka_2.13", version.ref = "kafka"}
+kafka-test = {module = "org.springframework.kafka:spring-kafka-test", version.ref = "kafka-test"}
+
+spock = {module = "org.spockframework:spock-core", version.ref = "spock"}
+
+groovy = {module = "org.codehaus.groovy:groovy-all", version.ref = "groovy"}
+
+jupiter = {module = "org.junit.jupiter:junit-jupiter-api", version.ref = "jupiter"}
+jupiter-engine = {module = "org.junit.jupiter:junit-jupiter-engine", version.ref = "jupiter"}

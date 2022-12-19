@@ -1,13 +1,11 @@
 plugins {
     id 'java'
     id 'groovy'
-    id 'org.springframework.boot' version '3.0.0'
-    id 'io.spring.dependency-management' version '1.1.0'
 }
 
-group = "org.example"
-version = "1.0-SNAPSHOT"
-sourceCompatibility = "17"
+group = 'org.example'
+version = '1.0-SNAPSHOT'
+sourceCompatibility = '17'
 
 repositories {
     mavenCentral()
@@ -15,19 +13,22 @@ repositories {
 
 dependencies {
     //Test
-    testImplementation 'org.spockframework:spock-core:2.0-groovy-3.0'
-    testImplementation 'org.codehaus.groovy:groovy-all:3.0.8'
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
-    testImplementation 'org.springframework.kafka:spring-kafka-test'
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation libs.spock
+    testImplementation libs.groovy
+    testImplementation libs.jupiter
+    testRuntimeOnly libs.jupiter.engine
+    testImplementation libs.kafka.test
+    testImplementation libs.spring.boot.starter.test
 
     //Impl
-    implementation 'org.springframework.boot:spring-boot-starter'
-    implementation 'org.apache.kafka:kafka_2.13:3.3.1'
-    compileOnly 'org.projectlombok:lombok:1.18.24'
+    implementation libs.spring.boot.starter
+    implementation libs.kafka
+    compileOnly libs.lombok
+
 }
 
 test {
     useJUnitPlatform()
 }
+
+
