@@ -20,4 +20,5 @@ jobs:
         run: |
           cd ${{ github.workspace }}
           sudo apt install openjdk-17-jre
+          export JAVA_HOME=/path/to/openjre-17
           sudo bash ./gradlew test
