@@ -16,4 +16,7 @@ jobs:
         run: |
           ls ${{ github.workspace }}
       - run: echo "🍏 This job's status is ${{ job.status }}."
-      - run: sudo ./gradlew test
+      - name: Execute test suite
+        run: |
+          cd ${{ github.workspace }}
+          ./gradlew test
