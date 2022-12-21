@@ -19,5 +19,5 @@ jobs:
       - name: Execute test suite
         run: |
           cd ${{ github.workspace }}
-          apt install openjdk-17-jre
+          sudo apt install openjdk-17-jre
           sudo bash ./gradlew test
