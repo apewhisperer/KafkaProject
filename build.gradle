@@ -13,10 +13,13 @@ repositories {
 
 dependencies {
     testImplementation libs.spock, libs.groovy, libs.junit, libs.spring.boot.starter.test, libs.spring.kafka.test
-    implementation libs.spring.boot.starter, libs.kafka
+    implementation libs.spring.boot.starter, libs.kafka, libs.kafka.streams, libs.spring.kafka
     compileOnly libs.lombok
 }
 
 test {
     useJUnitPlatform()
+    testLogging {
+        events "passed"
+    }
 }
