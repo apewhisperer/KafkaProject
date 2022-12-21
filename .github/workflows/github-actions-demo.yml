@@ -18,6 +18,8 @@ jobs:
       - run: echo "🍏 This job's status is ${{ job.status }}."
       - name: Execute test suite
         run: |
-          cd ${{ github.workspace }}
           sudo apt install openjdk-17-jre
-          sudo bash ./gradlew test -Dorg.gradle.java.home=/usr/bin/java
+          cd ${{ github.workspace }}
+#          sudo bash ./gradlew test -Dorg.gradle.java.home=/usr/bin/jvm/
+          cd /usr/lib/jvm
+          ls -lah
