@@ -19,4 +19,4 @@ jobs:
       - name: Execute test suite
         run: |
           cd ${{ github.workspace }}
-          sudo ./gradlew test
+          sudo bash ./gradlew test
