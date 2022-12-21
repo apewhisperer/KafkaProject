@@ -14,9 +14,11 @@ class ProcessingServiceIT extends Specification {
 
     def inboxTopic = 'inbox-topic'
     def outboxTopic = 'outbox-topic'
+    def groupId = 'group-id'
+    def offset = 'earliest'
 
     @ClassRule
-    EmbeddedKafkaRule rule = new EmbeddedKafkaRule(1, true, inboxTopic)
+    EmbeddedKafkaRule rule = new EmbeddedKafkaRule(1, true, inboxTopic, outboxTopic)
 
     def setup() {
         rule.before()
@@ -43,8 +45,8 @@ class ProcessingServiceIT extends Specification {
         props.setProperty(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, rule.getEmbeddedKafka().getBrokersAsString())
         props.setProperty(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.name)
         props.setProperty(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.name)
-        props.setProperty(ConsumerConfig.GROUP_ID_CONFIG, 'group-id')
-        props.setProperty(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, 'earliest')
+        props.setProperty(ConsumerConfig.GROUP_ID_CONFIG, groupId)
+        props.setProperty(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, offset)
         props
     }
 

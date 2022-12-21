@@ -1,13 +1,12 @@
 [versions]
-spring-boot-starter = "2.7.5"
+spring-boot-starter = "3.0.0"
 lombok = "1.18.22"
 kafka = "3.3.1"
 kafka-streams = "3.3.1"
 spring-kafka = "3.0.0"
-kafka-test = "2.9.2"
 spock = "2.0-groovy-3.0"
+junit = "4.13.2'"
 groovy = "3.0.8"
-jupiter = '5.8.1'
 
 [libraries]
 spring-boot-starter = {module = "org.springframework.boot:spring-boot-starter", version.ref = "spring-boot-starter" }
@@ -18,11 +17,9 @@ lombok = {module = "org.projectlombok:lombok", version.ref = "lombok"}
 kafka = {module = "org.apache.kafka:kafka-clients", version.ref = "kafka"}
 kafka-streams = {module = "org.apache.kafka:kafka-streams", version.ref = "kafka-streams"}
 spring-kafka = {module = "org.springframework.kafka:spring-kafka", version.ref = "spring-kafka"}
-kafka-test = {module = "org.springframework.kafka:spring-kafka-test", version.ref = "kafka-test"}
+spring-kafka-test = {module = "org.springframework.kafka:spring-kafka-test", version.ref = "spring-kafka"}
 
 spock = {module = "org.spockframework:spock-core", version.ref = "spock"}
+junit = {module = "junit:junit", version.ref = "junit"}
 
 groovy = {module = "org.codehaus.groovy:groovy-all", version.ref = "groovy"}
-
-jupiter = {module = "org.junit.jupiter:junit-jupiter-api", version.ref = "jupiter"}
-jupiter-engine = {module = "org.junit.jupiter:junit-jupiter-engine", version.ref = "jupiter"}
