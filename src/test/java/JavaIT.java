@@ -6,9 +6,9 @@ import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.kafka.test.context.EmbeddedKafka;
 import org.springframework.kafka.test.utils.KafkaTestUtils;
+import service.ProcessingService;
 
 import java.util.List;
 import java.util.Properties;
@@ -20,7 +20,7 @@ import java.util.Properties;
                 "outbox-topic"
         },
         brokerProperties = {
-                "listeners=PLAINTEXT://localhost:9092"
+                "listeners=PLAINTEXT://127.0.0.1:9092"
         }
 )
 public class JavaIT {
@@ -33,13 +33,15 @@ public class JavaIT {
 
         @Test
         public void should() {
+                ProcessingService service = new ProcessingService();
+                service.buildTopology();
                 KafkaProducer kafkaProducer = new KafkaProducer(createProducerProps());
                 KafkaConsumer kafkaConsumer = new KafkaConsumer(createConsumerProps());
-                kafkaConsumer.subscribe(List.of(inboxTopic));
+                kafkaConsumer.subscribe(List.of(outboxTopic));
 
                 kafkaProducer.send(new ProducerRecord(inboxTopic, "msg"));
 
-                assert KafkaTestUtils.getSingleRecord(kafkaConsumer, inboxTopic).value().equals("msg");
+                assert KafkaTestUtils.getSingleRecord(kafkaConsumer, outboxTopic).value().equals("msg");
         }
 
         Properties createConsumerProps() {

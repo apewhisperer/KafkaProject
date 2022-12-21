@@ -6,11 +6,18 @@ import org.apache.kafka.clients.producer.ProducerRecord
 import org.apache.kafka.common.serialization.StringDeserializer
 import org.apache.kafka.common.serialization.StringSerializer
 import org.junit.ClassRule
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.kafka.test.rule.EmbeddedKafkaRule
 import org.springframework.kafka.test.utils.KafkaTestUtils
+import service.ProcessingService
 import spock.lang.Specification
 
+@SpringBootTest
 class ProcessingServiceIT extends Specification {
+
+    @Autowired
+    ProcessingService service;
 
     def inboxTopic = 'inbox-topic'
     def outboxTopic = 'outbox-topic'
@@ -33,7 +40,7 @@ class ProcessingServiceIT extends Specification {
 
         when:
         //TODO: temp same topic (outbox)
-        producer.send(new ProducerRecord(outboxTopic, 'secret message'))
+        producer.send(new ProducerRecord(inboxTopic, 'secret message'))
         def actual = KafkaTestUtils.getSingleRecord(consumer, outboxTopic)
 
         then:
