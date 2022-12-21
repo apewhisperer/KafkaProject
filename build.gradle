@@ -12,22 +12,17 @@ repositories {
 }
 
 dependencies {
-    //Test
-    testImplementation libs.spock
-    testImplementation libs.groovy
-    testImplementation libs.jupiter
-    testRuntimeOnly libs.jupiter.engine
-    testImplementation libs.kafka.test
-    testImplementation libs.spring.boot.starter.test
+    testImplementation group: 'org.springframework.kafka', name: 'spring-kafka-test', version: '2.9.2'
+    testImplementation group: 'org.spockframework', name: 'spock-core', version: '2.4-M1-groovy-4.0'
+    testImplementation group: 'junit', name: 'junit', version: '4.13.2'
+    testImplementation group: 'org.springframework.boot', name: 'spring-boot-starter-test', version: '3.0.0'
 
-    //Impl
-    implementation libs.spring.boot.starter
-    implementation libs.kafka
-    compileOnly libs.lombok
+//    testImplementation libs.spock, libs.groovy, libs.kafka.test, libs.spring.boot.starter.test
+//    testRuntimeOnly libs.jupiter.engine
+//    implementation libs.spring.boot.starter, libs.kafka, libs.kafka.streams, libs.spring.kafka
+//    compileOnly libs.lombok
 }
 
 test {
     useJUnitPlatform()
 }
-
-

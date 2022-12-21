@@ -5,40 +5,42 @@ import org.apache.kafka.clients.producer.ProducerConfig
 import org.apache.kafka.clients.producer.ProducerRecord
 import org.apache.kafka.common.serialization.StringDeserializer
 import org.apache.kafka.common.serialization.StringSerializer
-import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.kafka.test.context.EmbeddedKafka
+import org.junit.ClassRule
+import org.springframework.kafka.test.rule.EmbeddedKafkaRule
+import org.springframework.kafka.test.utils.KafkaTestUtils
 import spock.lang.Specification
 
-import java.time.Duration
-
-@SpringBootTest
-@EmbeddedKafka(
-        partitions = 1,
-        topics = ['inbox-topic', 'outbox-topic'],
-        brokerProperties = [
-                'listeners=PLAINTEXT://localhost:9090'
-        ])
 class ProcessingServiceIT extends Specification {
+
+    def inboxTopic = 'inbox-topic'
+    def outboxTopic = 'outbox-topic'
+
+    @ClassRule
+    EmbeddedKafkaRule rule = new EmbeddedKafkaRule(1, true, inboxTopic)
+
+    def setup() {
+        rule.before()
+    }
 
     def 'should process message when kafka message is received'() {
         given:
         def producer = new KafkaProducer(createProducerProps())
         def consumer = new KafkaConsumer(createConsumerProps())
-        def actual
         def expected = 'secret message'
-        consumer.subscribe(['outbox-topic'])
+        consumer.subscribe([outboxTopic])
 
         when:
-        producer.send(new ProducerRecord<String, String>('outbox-topic', 'secret message'))
-        actual = consumer.poll(Duration.ofMillis(1000))
+        //TODO: temp same topic (outbox)
+        producer.send(new ProducerRecord(outboxTopic, 'secret message'))
+        def actual = KafkaTestUtils.getSingleRecord(consumer, outboxTopic)
 
         then:
-        assert actual.first() == expected
+        assert actual.value == expected
     }
 
     Properties createConsumerProps() {
         def props = new Properties()
-        props.setProperty(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, 'localhost:9090')
+        props.setProperty(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, rule.getEmbeddedKafka().getBrokersAsString())
         props.setProperty(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.name)
         props.setProperty(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.name)
         props.setProperty(ConsumerConfig.GROUP_ID_CONFIG, 'group-id')
@@ -48,7 +50,7 @@ class ProcessingServiceIT extends Specification {
 
     Properties createProducerProps() {
         def props = new Properties()
-        props.setProperty(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, 'localhost:9090')
+        props.setProperty(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG,  rule.getEmbeddedKafka().getBrokersAsString())
         props.setProperty(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.name)
         props.setProperty(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class.name)
         props

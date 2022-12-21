@@ -1,8 +1,10 @@
 [versions]
-spring-boot-starter = "3.0.0"
+spring-boot-starter = "2.7.5"
 lombok = "1.18.22"
 kafka = "3.3.1"
-kafka-test = "3.0.0"
+kafka-streams = "3.3.1"
+spring-kafka = "3.0.0"
+kafka-test = "2.9.2"
 spock = "2.0-groovy-3.0"
 groovy = "3.0.8"
 jupiter = '5.8.1'
@@ -13,7 +15,9 @@ spring-boot-starter-test = {module = "org.springframework.boot:spring-boot-start
 
 lombok = {module = "org.projectlombok:lombok", version.ref = "lombok"}
 
-kafka = {module = "org.apache.kafka:kafka_2.13", version.ref = "kafka"}
+kafka = {module = "org.apache.kafka:kafka-clients", version.ref = "kafka"}
+kafka-streams = {module = "org.apache.kafka:kafka-streams", version.ref = "kafka-streams"}
+spring-kafka = {module = "org.springframework.kafka:spring-kafka", version.ref = "spring-kafka"}
 kafka-test = {module = "org.springframework.kafka:spring-kafka-test", version.ref = "kafka-test"}
 
 spock = {module = "org.spockframework:spock-core", version.ref = "spock"}
