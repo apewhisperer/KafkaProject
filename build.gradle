@@ -3,7 +3,7 @@ plugins {
     id 'groovy'
 }
 
-group = 'org.example'
+group = 'org.domain'
 version = '1.0-SNAPSHOT'
 sourceCompatibility = '17'
 
@@ -12,7 +12,7 @@ repositories {
 }
 
 dependencies {
-    testImplementation libs.spock, libs.groovy, libs.junit, libs.spring.boot.starter.test, libs.spring.kafka.test
+    testImplementation libs.spock, libs.spring.spock, libs.groovy, libs.jupiter, libs.spring.boot.starter.test, libs.spring.kafka.test
     implementation libs.spring.boot.starter, libs.kafka, libs.kafka.streams, libs.spring.kafka
     compileOnly libs.lombok
     annotationProcessor libs.lombok

@@ -1,3 +1,4 @@
+import config.ApplicationConfig
 import org.apache.kafka.clients.consumer.ConsumerConfig
 import org.apache.kafka.clients.consumer.KafkaConsumer
 import org.apache.kafka.clients.producer.KafkaProducer
@@ -5,47 +6,69 @@ import org.apache.kafka.clients.producer.ProducerConfig
 import org.apache.kafka.clients.producer.ProducerRecord
 import org.apache.kafka.common.serialization.StringDeserializer
 import org.apache.kafka.common.serialization.StringSerializer
-import org.junit.ClassRule
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.kafka.test.rule.EmbeddedKafkaRule
+import org.springframework.beans.factory.annotation.Value
+import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.kafka.test.context.EmbeddedKafka
 import org.springframework.kafka.test.utils.KafkaTestUtils
 import service.ProcessingService
+import spock.lang.Specification
 
-class ProcessingServiceIT {
+@EmbeddedKafka(
+        partitions = 1,
+        topics = [
+                '${spring.kafka.config.inbox-topic}',
+                '${spring.kafka.config.outbox-topic}'
+        ],
+        brokerProperties = [
+                'listeners=PLAINTEXT://${spring.kafka.config.bootstrap-servers}'
+        ]
+)
+@SpringBootTest(classes = ApplicationConfig.class)
+class ProcessingServiceIT extends Specification {
 
+    private KafkaProducer producer
+    private KafkaConsumer consumer
     @Autowired
-    ProcessingService service
-
-    def inboxTopic = 'inbox-topic'
-    def outboxTopic = 'outbox-topic'
-    def groupId = 'group-id'
-    def offset = 'earliest'
-
-    @ClassRule
-    EmbeddedKafkaRule rule = new EmbeddedKafkaRule(1, true, inboxTopic, outboxTopic)
+    private ProcessingService processingService;
+    @Autowired
+    private ApplicationConfig applicationConfig;
+    @Value('${spring.kafka.config.bootstrap-servers}')
+    private String bootstrapServers;
+    @Value('${spring.kafka.config.inbox-topic}')
+    private String inboxTopic;
+    @Value('${spring.kafka.config.outbox-topic}')
+    private String outboxTopic;
+    @Value('${spring.kafka.config.group-id}')
+    private String groupId;
+    @Value('${spring.kafka.config.auto-offset}')
+    private String offset;
 
     def setup() {
-        rule.before()
+        producer = new KafkaProducer(createProducerProps())
+        consumer = new KafkaConsumer(createConsumerProps())
+        consumer.subscribe([outboxTopic])
     }
 
-    def 'should process message when kafka message is received'() {
+    def cleanup() {
+        producer.close()
+        consumer.close()
+    }
+
+    def 'should poll processed message from outbox topic when initial message is sent to inbox topic'() {
         given:
-        def producer = new KafkaProducer(createProducerProps())
-        def consumer = new KafkaConsumer(createConsumerProps())
-        def expected = 'secret message'
-        consumer.subscribe([outboxTopic])
+        def expected = 'nulla dies sine linea'
 
         when:
         producer.send(new ProducerRecord(inboxTopic, expected))
-        def actual = KafkaTestUtils.getSingleRecord(consumer, outboxTopic)
 
         then:
-        assert actual.value == expected
+        KafkaTestUtils.getSingleRecord(consumer, outboxTopic).value == expected
     }
 
-    Properties createConsumerProps() {
+    private Properties createConsumerProps() {
         def props = new Properties()
-        props.setProperty(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, rule.getEmbeddedKafka().getBrokersAsString())
+        props.setProperty(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers)
         props.setProperty(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.name)
         props.setProperty(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.name)
         props.setProperty(ConsumerConfig.GROUP_ID_CONFIG, groupId)
@@ -53,9 +76,9 @@ class ProcessingServiceIT {
         props
     }
 
-    Properties createProducerProps() {
+    private Properties createProducerProps() {
         def props = new Properties()
-        props.setProperty(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, rule.getEmbeddedKafka().getBrokersAsString())
+        props.setProperty(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers)
         props.setProperty(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.name)
         props.setProperty(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class.name)
         props
