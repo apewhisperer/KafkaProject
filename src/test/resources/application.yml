@@ -3,3 +3,9 @@ spring:
     config:
       bootstrap-servers: 127.0.0.1:9092
       application-id: kafka-project
+    test:
+      bootstrap-servers: 127.0.0.1:9092
+      inbox-topic: inbox-topic
+      outbox-topic: outbox-topic
+      group-id: group-id
+      auto-offset: earliest

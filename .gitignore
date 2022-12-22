@@ -1,5 +1,5 @@
 .idea
-/out
+out/
 /shelf/
 /workspace.xml
 .gradle
