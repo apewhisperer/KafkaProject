@@ -20,25 +20,25 @@ import java.util.Properties;
 @EmbeddedKafka(
         partitions = 1,
         topics = {
-                "${spring.kafka.test.inbox-topic}",
-                "${spring.kafka.test.outbox-topic}"
+                "${spring.kafka.config.inbox-topic}",
+                "${spring.kafka.config.outbox-topic}"
         },
         brokerProperties = {
-                "listeners=PLAINTEXT://${spring.kafka.test.bootstrap-servers}"
+                "listeners=PLAINTEXT://${spring.kafka.config.bootstrap-servers}"
         }
 )
 @SpringBootTest(classes = ApplicationConfig.class)
 public class JavaIT {
 
-        @Value("${spring.kafka.test.bootstrap-servers}")
+        @Value("${spring.kafka.config.bootstrap-servers}")
         private String bootstrapServers;
-        @Value("${spring.kafka.test.inbox-topic}")
+        @Value("${spring.kafka.config.inbox-topic}")
         private String inboxTopic;
-        @Value("${spring.kafka.test.outbox-topic}")
+        @Value("${spring.kafka.config.outbox-topic}")
         private String outboxTopic;
-        @Value("${spring.kafka.test.group-id}")
+        @Value("${spring.kafka.config.group-id}")
         private String groupId;
-        @Value("${spring.kafka.test.auto-offset}")
+        @Value("${spring.kafka.config.auto-offset}")
         private String offset;
         @Autowired
         ProcessingService processingService;
