@@ -1,4 +1,4 @@
-import config.KafkaConfig;
+import config.ApplicationConfig;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.producer.KafkaProducer;
@@ -27,7 +27,7 @@ import java.util.Properties;
                 "listeners=PLAINTEXT://${spring.kafka.test.bootstrap-servers}"
         }
 )
-@SpringBootTest(classes = {KafkaConfig.class, ProcessingService.class})
+@SpringBootTest(classes = ApplicationConfig.class)
 public class JavaIT {
 
         @Value("${spring.kafka.test.bootstrap-servers}")
@@ -41,9 +41,9 @@ public class JavaIT {
         @Value("${spring.kafka.test.auto-offset}")
         private String offset;
         @Autowired
-        ProcessingService service;
+        ProcessingService processingService;
         @Autowired
-        KafkaConfig kafkaConfig;
+        ApplicationConfig applicationConfig;
 
         @Test
         public void shouldPollProcessedMessageWhenEventIsSentToKafka() {
