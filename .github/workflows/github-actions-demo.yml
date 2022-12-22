@@ -5,8 +5,11 @@ jobs:
   Explore-GitHub-Actions:
     runs-on: ubuntu-latest
     steps:
+      - name: Install java jre
+        run: |
+          sudo apt install openjdk-17-jre
       - name: Execute test suite
         run: |
           cd ${{ github.workspace }}
-          sudo apt install openjdk-17-jre
+          chmod +x gradlew
           sudo bash ./gradlew test -Dorg.gradle.java.home=/usr/lib/jvm/java-17-openjdk-amd64
