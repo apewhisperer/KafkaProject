@@ -1,3 +1,4 @@
+import config.KafkaConfig;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.producer.KafkaProducer;
@@ -6,6 +7,8 @@ import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.kafka.test.context.EmbeddedKafka;
 import org.springframework.kafka.test.utils.KafkaTestUtils;
 import service.ProcessingService;
@@ -23,6 +26,7 @@ import java.util.Properties;
                 "listeners=PLAINTEXT://127.0.0.1:9092"
         }
 )
+@SpringBootTest(classes = {KafkaConfig.class, ProcessingService.class})
 public class JavaIT {
 
         private String localhost = "127.0.0.1:9092";
@@ -31,10 +35,14 @@ public class JavaIT {
         private String groupId = "group-id";
         private String offset = "earliest";
 
+        @Autowired
+        ProcessingService service;
+
+        @Autowired
+        KafkaConfig kafkaConfig;
+
         @Test
-        public void should() {
-                ProcessingService service = new ProcessingService();
-                service.buildTopology();
+        public void shouldPollProcessedMessageWhenEventIsSentToKafka() {
                 KafkaProducer kafkaProducer = new KafkaProducer(createProducerProps());
                 KafkaConsumer kafkaConsumer = new KafkaConsumer(createConsumerProps());
                 kafkaConsumer.subscribe(List.of(outboxTopic));

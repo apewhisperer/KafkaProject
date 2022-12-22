@@ -1,23 +1,34 @@
+import config.KafkaConfig
+import groovy.transform.CompileStatic
 import org.apache.kafka.clients.consumer.ConsumerConfig
 import org.apache.kafka.clients.consumer.KafkaConsumer
 import org.apache.kafka.clients.producer.KafkaProducer
 import org.apache.kafka.clients.producer.ProducerConfig
 import org.apache.kafka.clients.producer.ProducerRecord
+import org.apache.kafka.common.serialization.Serdes
 import org.apache.kafka.common.serialization.StringDeserializer
 import org.apache.kafka.common.serialization.StringSerializer
 import org.junit.ClassRule
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.context.annotation.Bean
+import org.springframework.context.annotation.Configuration
+import org.springframework.kafka.annotation.KafkaStreamsDefaultConfiguration
+import org.springframework.kafka.config.KafkaStreamsConfiguration
 import org.springframework.kafka.test.rule.EmbeddedKafkaRule
 import org.springframework.kafka.test.utils.KafkaTestUtils
+import org.springframework.test.context.ContextConfiguration
 import service.ProcessingService
-import spock.lang.Specification
 
-@SpringBootTest
-class ProcessingServiceIT extends Specification {
+import static org.apache.kafka.streams.StreamsConfig.*
+
+@ContextConfiguration(classes = KafkaConfig)
+class ProcessingServiceIT {
 
     @Autowired
-    ProcessingService service;
+    ProcessingService service
+
+    @Autowired
+    KafkaConfig kafkaConfig
 
     def inboxTopic = 'inbox-topic'
     def outboxTopic = 'outbox-topic'
@@ -39,8 +50,7 @@ class ProcessingServiceIT extends Specification {
         consumer.subscribe([outboxTopic])
 
         when:
-        //TODO: temp same topic (outbox)
-        producer.send(new ProducerRecord(inboxTopic, 'secret message'))
+        producer.send(new ProducerRecord(inboxTopic, expected))
         def actual = KafkaTestUtils.getSingleRecord(consumer, outboxTopic)
 
         then:
@@ -59,9 +69,28 @@ class ProcessingServiceIT extends Specification {
 
     Properties createProducerProps() {
         def props = new Properties()
-        props.setProperty(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG,  rule.getEmbeddedKafka().getBrokersAsString())
+        props.setProperty(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, rule.getEmbeddedKafka().getBrokersAsString())
         props.setProperty(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.name)
         props.setProperty(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class.name)
         props
+    }
+
+    @CompileStatic
+    @Configuration
+    static class SpringConfig {
+        @Bean(name = KafkaStreamsDefaultConfiguration.DEFAULT_STREAMS_CONFIG_BEAN_NAME)
+        KafkaStreamsConfiguration kStreamsConfig() {
+            Map<String, Object> props = new HashMap<>()
+            props.put(APPLICATION_ID_CONFIG, "streams-app")
+            props.put(BOOTSTRAP_SERVERS_CONFIG, "127.0.0.1:9092")
+            props.put(DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.String().getClass().getName())
+            props.put(DEFAULT_VALUE_SERDE_CLASS_CONFIG, Serdes.String().getClass().getName())
+            new KafkaStreamsConfiguration(props)
+        }
+
+        @Bean
+        ProcessingService processingService() {
+            new ProcessingService()
+        }
     }
 }
