@@ -9,4 +9,4 @@ jobs:
         run: |
           cd ${{ github.workspace }}
           sudo apt install openjdk-17-jre
-          sudo bash ./gradlew clean test -Dorg.gradle.java.home=/usr/lib/jvm/java-17-openjdk-amd64
+          sudo bash ./gradlew test -Dorg.gradle.java.home=/usr/lib/jvm/java-17-openjdk-amd64
