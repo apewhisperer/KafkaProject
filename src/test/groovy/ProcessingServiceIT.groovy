@@ -1,4 +1,3 @@
-import config.ApplicationConfig
 import org.apache.kafka.clients.consumer.ConsumerConfig
 import org.apache.kafka.clients.consumer.KafkaConsumer
 import org.apache.kafka.clients.producer.KafkaProducer
@@ -16,9 +15,6 @@ class ProcessingServiceIT {
 
     @Autowired
     ProcessingService service
-
-    @Autowired
-    KafkaConfig kafkaConfig
 
     def inboxTopic = 'inbox-topic'
     def outboxTopic = 'outbox-topic'
