@@ -1,5 +1,0 @@
-spring:
-  kafka:
-    config:
-      bootstrap-servers: 93.180.177.75:9092
-      application-id: kafka-project

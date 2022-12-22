@@ -10,6 +10,6 @@ jobs:
           sudo apt install openjdk-17-jre
       - name: Execute test suite
         run: |
-          cd ${{ github.workspace }}
+          cd ${{ github.workspace }}/..
           ls -lah
 #          sudo bash ./gradlew test -Dorg.gradle.java.home=/usr/lib/jvm/java-17-openjdk-amd64
