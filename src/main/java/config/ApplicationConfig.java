@@ -12,11 +12,11 @@ public class ApplicationConfig {
     ProcessingService processingService(
             @Value("${spring.kafka.config.application-id}") String applicationId,
             @Value("${spring.kafka.config.bootstrap-servers}") String bootstrapServers,
-            @Value("${spring.kafka.config.inbox-topic}") String inboxTopic,
-            @Value("${spring.kafka.config.outbox-topic}") String outboxTopic
+            @Value("${spring.kafka.config.input-topic}") String inputTopic,
+            @Value("${spring.kafka.config.output-topic}") String outputTopic
     ) {
         ProcessingService processingService = new ProcessingService();
-        processingService.startTopology(applicationId, bootstrapServers, inboxTopic, outboxTopic);
+        processingService.startTopology(applicationId, bootstrapServers, inputTopic, outputTopic);
         return processingService;
     }
 }

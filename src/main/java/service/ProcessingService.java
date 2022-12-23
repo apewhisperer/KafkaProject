@@ -14,16 +14,15 @@ import static org.apache.kafka.streams.StreamsConfig.*;
 @Slf4j
 public class ProcessingService {
 
-    public void startTopology(String applicationId, String bootstrapServers, String inboxTopic, String outboxTopic) {
-        KafkaStreams kafkaStreams = new KafkaStreams(buildTopology(inboxTopic, outboxTopic), createProperties(applicationId, bootstrapServers));
+    public void startTopology(String applicationId, String bootstrapServers, String inputTopic, String outputTopic) {
+        KafkaStreams kafkaStreams = new KafkaStreams(buildTopology(inputTopic, outputTopic), createProperties(applicationId, bootstrapServers));
         kafkaStreams.start();
     }
 
-    public Topology buildTopology(String inboxTopic, String outboxTopic) {
+    public Topology buildTopology(String inputTopic, String outputTopic) {
         StreamsBuilder streamsBuilder = new StreamsBuilder();
-        streamsBuilder.stream(inboxTopic)
-                .peek((k, v) -> log.debug("$k ::: $v"))
-                .to(outboxTopic);
+        streamsBuilder.stream(inputTopic)
+                .to(outputTopic);
         return streamsBuilder.build();
     }
 

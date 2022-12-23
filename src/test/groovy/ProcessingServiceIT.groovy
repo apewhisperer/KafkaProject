@@ -17,8 +17,8 @@ import spock.lang.Specification
 @EmbeddedKafka(
         partitions = 1,
         topics = [
-                '${spring.kafka.config.inbox-topic}',
-                '${spring.kafka.config.outbox-topic}'
+                '${spring.kafka.config.input-topic}',
+                '${spring.kafka.config.output-topic}'
         ],
         brokerProperties = [
                 'listeners=PLAINTEXT://${spring.kafka.config.bootstrap-servers}'
@@ -35,10 +35,10 @@ class ProcessingServiceIT extends Specification {
     private ApplicationConfig applicationConfig;
     @Value('${spring.kafka.config.bootstrap-servers}')
     private String bootstrapServers;
-    @Value('${spring.kafka.config.inbox-topic}')
-    private String inboxTopic;
-    @Value('${spring.kafka.config.outbox-topic}')
-    private String outboxTopic;
+    @Value('${spring.kafka.config.input-topic}')
+    private String inputTopic;
+    @Value('${spring.kafka.config.output-topic}')
+    private String outputTopic;
     @Value('${spring.kafka.config.group-id}')
     private String groupId;
     @Value('${spring.kafka.config.auto-offset}')
@@ -47,7 +47,7 @@ class ProcessingServiceIT extends Specification {
     def setup() {
         producer = new KafkaProducer(createProducerProps())
         consumer = new KafkaConsumer(createConsumerProps())
-        consumer.subscribe([outboxTopic])
+        consumer.subscribe([outputTopic])
     }
 
     def cleanup() {
@@ -55,15 +55,15 @@ class ProcessingServiceIT extends Specification {
         consumer.close()
     }
 
-    def 'should poll processed message from outbox topic when initial message is sent to inbox topic'() {
+    def 'should poll processed message from output topic when initial message is sent to input topic'() {
         given:
         def expected = 'nulla dies sine linea'
 
         when:
-        producer.send(new ProducerRecord(inboxTopic, expected))
+        producer.send(new ProducerRecord(inputTopic, expected))
 
         then:
-        KafkaTestUtils.getSingleRecord(consumer, outboxTopic).value == expected
+        KafkaTestUtils.getSingleRecord(consumer, outputTopic).value == expected
     }
 
     private Properties createConsumerProps() {
