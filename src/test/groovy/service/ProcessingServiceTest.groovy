@@ -12,8 +12,8 @@ import static org.apache.kafka.streams.StreamsConfig.*
 
 class ProcessingServiceTest extends Specification {
 
-    private final String INPUT_TOPIC = "input-topic"
-    private final String OUTPUT_TOPIC = "output-topic"
+    private final String INPUT_TOPIC = 'input-topic'
+    private final String OUTPUT_TOPIC = 'output-topic'
     private ProcessingService processingService
     private TopologyTestDriver testDriver
     private TestInputTopic<String, String> inputTopic;
