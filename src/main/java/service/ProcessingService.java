@@ -1,6 +1,6 @@
 package service;
 
-import lombok.extern.slf4j.Slf4j;
+import logging.KafkaProjectLogger;
 import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.streams.KafkaStreams;
 import org.apache.kafka.streams.StreamsBuilder;
@@ -11,22 +11,30 @@ import java.util.Properties;
 
 import static org.apache.kafka.streams.StreamsConfig.*;
 
-@Slf4j
 public class ProcessingService {
 
     public void startTopology(String applicationId, String bootstrapServers, String inputTopic, String outputTopic) {
-        KafkaStreams kafkaStreams = new KafkaStreams(buildTopology(inputTopic, outputTopic), createProperties(applicationId, bootstrapServers));
+        KafkaStreams kafkaStreams = createKafkaStreams(buildTopology(inputTopic, outputTopic), createStreamsConfig(applicationId, bootstrapServers));
         kafkaStreams.start();
     }
 
     public Topology buildTopology(String inputTopic, String outputTopic) {
-        StreamsBuilder streamsBuilder = new StreamsBuilder();
+        StreamsBuilder streamsBuilder = createStreamsBuilder();
         streamsBuilder.stream(inputTopic)
+                .peek((k, v) -> KafkaProjectLogger.debug("$k ::: $v"))
                 .to(outputTopic);
         return streamsBuilder.build();
     }
 
-    private StreamsConfig createProperties(String applicationId, String bootstrapServers) {
+    private static KafkaStreams createKafkaStreams(Topology topology, StreamsConfig streamsConfig) {
+        return new KafkaStreams(topology, streamsConfig);
+    }
+
+    private static StreamsBuilder createStreamsBuilder() {
+        return new StreamsBuilder();
+    }
+
+    private StreamsConfig createStreamsConfig(String applicationId, String bootstrapServers) {
         Properties props = new Properties();
         props.put(APPLICATION_ID_CONFIG, applicationId);
         props.put(BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
